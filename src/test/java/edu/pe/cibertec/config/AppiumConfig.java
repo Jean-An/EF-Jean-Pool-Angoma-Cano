@@ -1,5 +1,6 @@
 package edu.pe.cibertec.config;
 
+import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.options.UiAutomator2Options;
 
@@ -22,7 +23,7 @@ public class AppiumConfig {
                 .setDeviceName("emulator-5554")
                 .setApp("C:\\appium-test\\apk\\shooping-cart-appium-demo.apk")
                 .setAutomationName("UiAutomator2")
-                .setNoReset(true);
+                .setNoReset(false);
         try{
             driver = new AndroidDriver(new URL("http://127.0.0.1:4723"), options);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
@@ -30,6 +31,7 @@ public class AppiumConfig {
             throw new RuntimeException("URL Appium invalida", e);
         }
     }
+
     public static void quitDriver() {
         if (driver != null) {
             driver.quit();
