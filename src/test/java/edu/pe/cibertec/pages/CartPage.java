@@ -60,6 +60,7 @@ public class CartPage {
                 ExpectedConditions.visibilityOfElementLocated(
                         AppiumBy.xpath("//android.view.View[@content-desc=\"Volver\"]")
                 ));
+        backButton.click();
     }
 
     public void goBack(){

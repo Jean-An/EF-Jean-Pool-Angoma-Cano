@@ -69,8 +69,10 @@ public class HomePage {
         profileTab.click();
     }
 
-    public void clickFIlter(String filterName){
-        WebElement filter = wait.until(ExpectedConditions.elementToBeClickable((AppiumBy.xpath("//android.widget.TextView[@text=\"Todos\"]"))));
+    public void clickFilter(String filterName){
+        WebElement filter = wait.until(ExpectedConditions.elementToBeClickable(
+                AppiumBy.xpath("//android.widget.TextView[@text='"+filterName+"']")
+        ));
         filter.click();
     }
 

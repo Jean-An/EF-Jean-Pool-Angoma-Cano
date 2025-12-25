@@ -39,7 +39,7 @@ public class LoginPage {
     // ACCIONES DE LOS ELEMENTOS
 
     public void enterEmail(String email){
-        getPasswordField().click();
+        getEmailField().click();
         getEmailField().clear();
         getEmailField().sendKeys(email);
     }

@@ -1,64 +1,61 @@
 package edu.pe.cibertec.steps;
 
 import edu.pe.cibertec.config.AppiumConfig;
+import edu.pe.cibertec.pages.HomePage;
 import edu.pe.cibertec.pages.LoginPage;
 import io.appium.java_client.android.AndroidDriver;
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
-import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
+import io.cucumber.java.*;
+import io.cucumber.java.en.*;
+import org.junit.jupiter.api.Assertions;
 
 public class LoginSteps {
 
-    private static AndroidDriver driver;
-    private static LoginPage loginPage;
+    private AndroidDriver driver;
+    private LoginPage loginPage;
+    private HomePage homePage;
 
-    @Before
+    @Before("@login")
     public void setUp(){
-        System.out.println("INICIANDO DRIVER y PAGE OBJECTS");
         driver = AppiumConfig.getDriver();
         loginPage = new LoginPage(driver);
-        System.out.println("DRIVER INICIADO: " + (driver!=null));
-        System.out.println("LOGIN PAGE INICIADO:" + (loginPage!=null));
+        homePage = new HomePage(driver);
     }
 
-    @After
+    @After("@login")
     public void tearDown(){
-        System.out.println("CERRANDO DRIVER");
         AppiumConfig.quitDriver();
-        driver = null;
-        loginPage = null;
     }
 
     @Given("que el usuario esta en la pantalla de login")
-    public void queElUsuarioEstaEnLaPantallaDeLogin(){
-        System.out.println("USUARIO EN PANTALLA LOGIN");
+    public void enLogin(){
+        // Si quieres: valida presencia del botón login creando un método isLoginDisplayed()
+        Assertions.assertTrue(true);
     }
 
     @When("ingresa el email {string}")
-    public void ingresaElEmail(String email){
+    public void ingresaEmail(String email){
         loginPage.enterEmail(email);
     }
 
     @And("ingresa el password {string}")
-    public void ingresElPassword(String password){
+    public void ingresaPassword(String password){
         loginPage.enterPassword(password);
     }
 
     @And("hacer clic en el boton login")
-    public void haceClicEnElBotonLogin(){
+    public void clickLogin(){
         loginPage.clickLoginButton();
     }
 
     @Then("deberia acceder a la pantalla principal")
-    public void deberiaAccederALaPantallaPrincipal(){
-        System.out.println("VALIDANDO ACCESO PANTALLA PRINCIPAL");
+    public void validaHome(){
+        Assertions.assertTrue(homePage.isHomePageDisplayed(), "ERROR: No se mostró Home/Productos (login falló)");
     }
 
     @Then("deberia ver un mensaje de error")
-    public void deberiaVerUnMensajeDeError(){
-        System.out.println("VALIDANDO MENSAJE DE ERROR");
+    public void validaError(){
+        // En muchas apps el error es Toast o un TextView.
+        // Mínimo robusto: NO debe entrar al home.
+        Assertions.assertFalse(homePage.isHomePageDisplayed(), "ERROR: Entró al home cuando debía fallar el login");
     }
 }
