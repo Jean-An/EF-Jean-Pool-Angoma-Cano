@@ -3,6 +3,7 @@ package edu.pe.cibertec.steps;
 import edu.pe.cibertec.config.AppiumConfig;
 import edu.pe.cibertec.pages.HomePage;
 import edu.pe.cibertec.pages.LoginPage;
+import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import io.cucumber.java.*;
 import io.cucumber.java.en.*;
@@ -26,10 +27,19 @@ public class LoginSteps {
         AppiumConfig.quitDriver();
     }
 
+    private boolean isHomeMarkerPresent(){
+        return !driver.findElements(
+                AppiumBy.xpath("//android.widget.TextView[@text='Productos']")
+        ).isEmpty();
+    }
+
     @Given("que el usuario esta en la pantalla de login")
     public void enLogin(){
-        // Si quieres: valida presencia del botón login creando un método isLoginDisplayed()
-        Assertions.assertTrue(true);
+        System.out.println("=== PAGE SOURCE (LOGIN) ===");
+        System.out.println(driver.getPageSource());
+
+        Assertions.assertTrue(loginPage.isLoginScreenDisplayed(), "No se muestra la pantalla de Login");
+        Assertions.assertFalse(isHomeMarkerPresent(), "Ya está en Home y debería estar en Login");
     }
 
     @When("ingresa el email {string}")
@@ -49,13 +59,13 @@ public class LoginSteps {
 
     @Then("deberia acceder a la pantalla principal")
     public void validaHome(){
-        Assertions.assertTrue(homePage.isHomePageDisplayed(), "ERROR: No se mostró Home/Productos (login falló)");
+        Assertions.assertTrue(homePage.isHomePageDisplayed(), "No se mostró Home/Productos (login falló)");
     }
 
     @Then("deberia ver un mensaje de error")
     public void validaError(){
-        // En muchas apps el error es Toast o un TextView.
-        // Mínimo robusto: NO debe entrar al home.
-        Assertions.assertFalse(homePage.isHomePageDisplayed(), "ERROR: Entró al home cuando debía fallar el login");
+        Assertions.assertTrue(loginPage.isLoginScreenDisplayed(), "Tras login fallido, no se mantuvo en Login");
+        Assertions.assertFalse(isHomeMarkerPresent(), "Entró al Home cuando el login debía fallar");
+        Assertions.assertTrue(loginPage.isErrorMessageDisplayed(), "No se mostró mensaje de error en login fallido");
     }
 }

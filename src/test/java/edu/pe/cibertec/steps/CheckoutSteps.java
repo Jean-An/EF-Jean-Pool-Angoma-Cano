@@ -17,7 +17,7 @@ public class CheckoutSteps {
     private CheckoutPage checkoutPage;
     private ShippingPage shippingPage;
 
-    @Before("@checkout")
+    @Before
     public void setUp(){
         driver = AppiumConfig.getDriver();
         loginPage = new LoginPage(driver);
@@ -28,24 +28,34 @@ public class CheckoutSteps {
         shippingPage = new ShippingPage(driver);
     }
 
-    @After("@checkout")
+    @After
     public void tearDown(){
         AppiumConfig.quitDriver();
     }
 
+    private void loginIfNeeded(){
+        if (!homePage.isHomePageDisplayed()) {
+            loginPage.login("admin@test.com", "123456");
+            Assertions.assertTrue(homePage.isHomePageDisplayed(), "No se pudo hacer login / no se mostró Home");
+        }
+    }
+
     @Given("que el usuario tiene productos en el carrito")
     public void usuarioConProductosEnCarrito(){
-        loginPage.login("admin@test.com", "123456");
-        Assertions.assertTrue(homePage.isHomePageDisplayed(), "No se pudo hacer login/home");
+        loginIfNeeded();
 
         homePage.clickProduct("Laptop HP Pavilion");
-        Assertions.assertTrue(productDetailPage.isProductDetailDisplayed(), "No entró a detalle");
+        Assertions.assertTrue(productDetailPage.isProductDetailDisplayed(), "No entró a detalle del producto");
+
         productDetailPage.ClickAddToCart();
         Assertions.assertTrue(productDetailPage.isProductAddedMessageDisplayed(), "No se mostró confirmación de agregado");
 
         productDetailPage.goBack();
+        Assertions.assertTrue(homePage.isHomePageDisplayed(), "No regresó a Home");
+
         homePage.clickCartTab();
         Assertions.assertTrue(cartPage.isCartDisplayed(), "No se abrió carrito");
+        Assertions.assertFalse(cartPage.isCartEmpty(), "El carrito aparece vacío pero se agregó un producto");
     }
 
     @When("procede al checkout")
@@ -56,6 +66,11 @@ public class CheckoutSteps {
     @And("ingresa los datos de envio")
     public void ingresaDatosEnvio(){
         shippingPage.enterAddress("Av. Test 123");
+    }
+
+    @And("no ingresa direccion de envio")
+    public void noIngresaDireccion(){
+        shippingPage.enterAddress("");
     }
 
     @And("confirma la compra")
@@ -70,10 +85,11 @@ public class CheckoutSteps {
 
     @Given("que el usuario tiene el carrito vacio")
     public void usuarioCarritoVacio(){
-        loginPage.login("admin@test.com", "123456");
+        loginIfNeeded();
+
         homePage.clickCartTab();
         Assertions.assertTrue(cartPage.isCartDisplayed(), "No se abrió carrito");
-        Assertions.assertTrue(cartPage.isCartEmpty(), "El carrito no está vacío (debe iniciar vacío)");
+        Assertions.assertTrue(cartPage.isCartEmpty(), "El carrito no está vacío");
     }
 
     @When("intenta proceder al checkout")
@@ -83,12 +99,8 @@ public class CheckoutSteps {
 
     @Then("deberia ver mensaje de carrito vacio")
     public void validaCarritoVacio(){
-        Assertions.assertTrue(cartPage.isCartEmpty(), "No se mostró mensaje de carrito vacío");
-    }
-
-    @And("no ingresa direccion de envio")
-    public void noIngresaDireccion(){
-        shippingPage.enterAddress(""); // o simplemente no escribir nada si el campo inicia vacío
+        Assertions.assertTrue(cartPage.isCartEmpty() || checkoutPage.isEmptyCartMessageVisible(),
+                "No se mostró mensaje de carrito vacío / no se bloqueó checkout");
     }
 
     @Then("deberia ver mensaje de direccion requerida")

@@ -16,13 +16,13 @@ import org.junit.jupiter.api.Assertions;
 
 public class CartSteps {
 
-    private static AndroidDriver driver;
-    private static LoginPage loginPage;
-    private static HomePage homePage;
-    private static ProductDetailPage productDetailPage;
-    private static CartPage cartPage;
+    private AndroidDriver driver;
+    private LoginPage loginPage;
+    private HomePage homePage;
+    private ProductDetailPage productDetailPage;
+    private CartPage cartPage;
 
-    @Before("@cart")
+    @Before
     public void setUp(){
         driver = AppiumConfig.getDriver();
         loginPage = new LoginPage(driver);
@@ -31,7 +31,7 @@ public class CartSteps {
         cartPage = new CartPage(driver);
     }
 
-    @After("@cart")
+    @After
     public void tearDown(){
         AppiumConfig.quitDriver();
 

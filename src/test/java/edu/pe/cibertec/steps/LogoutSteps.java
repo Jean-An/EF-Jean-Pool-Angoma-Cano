@@ -14,7 +14,7 @@ public class LogoutSteps {
     private HomePage homePage;
     private ProfilePage profilePage;
 
-    @Before("@logout")
+    @Before
     public void setUp(){
         driver = AppiumConfig.getDriver();
         loginPage = new LoginPage(driver);
@@ -22,15 +22,9 @@ public class LogoutSteps {
         profilePage = new ProfilePage(driver);
     }
 
-    @After("@logout")
+    @After
     public void tearDown(){
         AppiumConfig.quitDriver();
-    }
-
-    @Given("que el usuario esta logueado en la aplicacion")
-    public void usuarioLogueado(){
-        loginPage.login("admin@test.com", "123456");
-        Assertions.assertTrue(homePage.isHomePageDisplayed(), "No se pudo loguear");
     }
 
     @When("hace clic en el menu de usuario")
@@ -47,9 +41,7 @@ public class LogoutSteps {
 
     @Then("deberia regresar a la pantalla de login")
     public void validaRegresoLogin(){
-        // Lo más robusto: verificar que el botón login existe nuevamente
-        // (crea un método en LoginPage para detectar botón o pantalla)
-        Assertions.assertDoesNotThrow(() -> loginPage.clickLoginButton(),
-                "No parece estar en login (no se pudo interactuar con botón login)");
+        Assertions.assertTrue(loginPage.isLoginScreenDisplayed(),
+                "No regresó a Login (no se detectan campos/botón)");
     }
 }

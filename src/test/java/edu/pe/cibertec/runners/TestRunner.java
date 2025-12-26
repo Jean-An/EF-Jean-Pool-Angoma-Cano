@@ -13,6 +13,9 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @SelectClasspathResource("features")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty, html:target/cucumber-reports/cucumber.html")
 @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "edu.pe.cibertec.steps")
-@ConfigurationParameter(key = FILTER_TAGS_PROPERTY_NAME, value = "not @wip")
+@ConfigurationParameter(
+        key = FILTER_TAGS_PROPERTY_NAME,
+        value = "@cart or @catalogo or @checkout or @login or @logout"
+)
 public class TestRunner {
 }
